@@ -14,7 +14,7 @@ shinyUI(navbarPage('1',
                                 
                                 # Create selectable input based on the type of measurement. 
                                 textInput("hash", label = h3("Enter Hashtag"), value = "#Hashtag")),
-                               
+                              selectInput('mapvar', label = 'Variable to Map', choices = list("Population" = 'population', 'Electoral Votes' = 'votes', 'Votes / Population' = 'ratio'),
                               
                               # Main panel: display plotly graph
                               mainPanel(

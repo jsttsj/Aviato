@@ -3,14 +3,21 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(jsonlite)
+library(twitteR)
 paste0(input$hash)
 twitter.key<-
-search.url<-paste0("https://api.twitter.com/1.1/search/tweets.json?q=%23",input$hash,"&result_type=recent",&key=)
+search.url<-paste0("https://api.twitter.com/1.1/search/tweets.json?q=%23",input$hash,"&result_type=recent","&key=")
 fromJSON("https://api.twitter.com/1.1/search/tweets.json?q=%23superbowl&result_type=recent")
 
+data<-getUser("")
+dataframe<-data$toDataFrame()
+newdata<-searchTwitter("PEOTUS",n=100)
+newdata.df<-twListToDF(newdata)
+View(dataframe)
+twitteR::availableTrendLocations()
+trends<-twitteR::getTrends(23424977)
 
 
-,
 
 df <- read.csv('https://raw.githubusercontent.com/plotly/datasets/master/2014_us_cities.csv')
 
