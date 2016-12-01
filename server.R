@@ -12,7 +12,7 @@ shinyServer(function(input, output) {
     base.url <- "https://api.twitter.com/1.1/search/tweets.json?q=%23"
     hashtag <- input$search
     query <- paste0(base.url, hashtag)
-    return(CreateMap())
+    #return(CreateMap())
   }) 
   
 })
