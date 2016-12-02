@@ -2,7 +2,7 @@ library(shiny)
 library(plotly)
 library(dplyr)
 library(rsconnect)
-
+library(twitteR)
 shinyUI(navbarPage('1',
                    # Create a tab panel
                    tabPanel('2',
