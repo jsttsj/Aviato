@@ -24,3 +24,7 @@ shinyUI(navbarPage('1',
                             )
                    )
 ))
+
+
+shinyUI()
+8d06760fb918ea2ed65c16bab3b7b7295820a374
