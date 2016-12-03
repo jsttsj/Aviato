@@ -5,6 +5,7 @@ library(plotly)
 library(rsconnect)
 library(jsonlite)
 
+# Twitter API calls --Sean
 install.packages('twitteR')
 library(twitteR)
 setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
@@ -19,14 +20,23 @@ View(dataframe)
 twitterR::availableTrendLocations()
 trends<-twitterR::getTrends(23424977)
 
+# Obtain geocodes. Merge each data frame with geocodes. --Jon
+
 shinyServer(function(input, output) { 
   
-  # Render a plotly object that returns your map
   output$map <- renderPlotly({ 
-    base.url <- "https://api.twitter.com/1.1/search/tweets.json?q=%23"
-    hashtag <- input$search
-    query <- paste0(base.url, hashtag)
-    #return(CreateMap())
+    
+    # Obtain user input string. --Jenny
+    
+    # For each of the 62 df, run through trending topics/hashtags. Stop at first instance
+    # where topic/hashtag contains input string. This will minic "related concepts" --Jenny
+    
+    # Retrieve row number of topic/hashtag. --Jenny
+    
+    # Plot the city on Plotly. Display the topic/hashtag being plotted. Modify size of 
+    # plotted dot based on the row number of the topic/hashtag. --Jenny
+    
+    #return()
   }) 
   
 })
