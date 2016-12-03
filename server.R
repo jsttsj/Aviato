@@ -20,6 +20,17 @@ View(dataframe)
 twitterR::availableTrendLocations()
 trends<-twitterR::getTrends(23424977)
 
+# This code is supposed to get the trend locations, and then get the trends for each location --Sean
+
+locations <- twitteR::availableTrendLocations()
+locations.US <- locations %>% 
+  filter(country == 'United States', name != 'United States') %>% 
+  select(name, woeid)
+for(i in 1:nrow(locations.US)){
+  name <- paste0('state.data.', locations.US$name[i])
+  assign(name, twitteR::getTrends(locations.US$woeid[i]))
+}
+
 # Obtain geocodes. Merge each data frame with geocodes. --Jon
 
 shinyServer(function(input, output) { 
