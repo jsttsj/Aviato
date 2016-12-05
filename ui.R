@@ -12,19 +12,22 @@ shinyUI(navbarPage('1',
                               
                               # Side panel for controls
                               sidebarPanel(
-                                
+                                helpText("Look at locations of the trending hashtag"),
                                 # Create selectable input based on the type of measurement. 
-                                textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag")),
+                                textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
+                                submitButton("Submit")
+                              ),
                               
                               # Main panel: display plotly graph
                               mainPanel(
+                                img(src="#putintwitterimagehere", height = 20, width = 20),
+                                
                                 #lable output box
                                 plotlyOutput('map')
                               )
                             )
                    )
 ))
-
 
 shinyUI()
 8d06760fb918ea2ed65c16bab3b7b7295820a374
