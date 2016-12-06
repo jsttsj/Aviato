@@ -8,7 +8,7 @@ shinyUI(
     verticalLayout(
       titlePanel("Aviato"),
       mainPanel(
-      img(src="twitter.jpg", height = 50, width =100, align ="right")),
+      img(src="twitter.jpg", height = 100, width =150, align ="right")),
    #lable output box
     plotOutput('map'),
     wellPanel(
