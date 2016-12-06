@@ -12,25 +12,30 @@ setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
                     "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
                     "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
                     "Ipi5Fun3ct3xbVFcfsAkCabWYMk0WLTp7Uyq3syYRVhKJ")
-data<-getUser("")
-dataframe<-data$toDataFrame()
-newdata<-searchTwitter("PEOTUS",n=100)
-newdata.df<-twListToDF(newdata)
-View(dataframe)
-twitterR::availableTrendLocations()
-trends<-twitterR::getTrends(23424977)
 
 # This code is supposed to get the trend locations, and then get the trends for each location --Sean
 
+# trend locations
 locations <- twitteR::availableTrendLocations()
+# getting only the locations and the id's associated
 locations.US <- locations %>% 
   filter(country == 'United States', name != 'United States') %>% 
   select(name, woeid)
-for(i in 1:nrow(locations.US)){
-  name <- paste0('state.data.', locations.US$name[i])
-  assign(name, twitteR::getTrends(locations.US$woeid[i]))
-}
+#removing spaces and hyphens for easier storage
+locations.US.nospace <- locations.US
+locations.US.nospace$name <- gsub(" ", "", locations.US.nospace$name)
+locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
+#initializing an empty matrix, and changing the names 
+city.data <- matrix(list(), nrow = 63, ncol = 1)
+dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
 
+for(i in 1:nrow(locations.US)){
+  name <- paste0('state.data.', locations.US.nospace$name[i])
+  assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
+  list <- eval(parse(text = name)) %>% select(name) %>% split(seq(nrow(eval(parse(text = name)))))
+  list <- list[c(1:20)]
+  city.data[[i, 1]] <- list
+}
 # Obtain geocodes. Merge each data frame with geocodes. --Jon
 
 shinyServer(function(input, output) { 
