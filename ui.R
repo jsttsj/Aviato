@@ -3,21 +3,41 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(twitteR)
-shinyUI(
-  fluidPage(
-    verticalLayout(
-      titlePanel("Aviato"),
-      mainPanel(
 
-      img(src="twitter.jpg", height = 100, width =150, align ="right")),
+navbarPage("Aviato!", 
+  tabPanel("Map",
+           verticalLayout(
+             titlePanel("Aviato"),
+             mainPanel(
+               img(src="twitter.jpg", height = 100, width =150, align ="right")),
+             plotOutput('map'),
+             wellPanel(
+               helpText("Look at the locations of trending hashtags"),
+               textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
+               submitButton("Submit")
+             )
+             )
+           ),
+  tabPanel("Table",
+           DT::dataTableOutput("table"))
+  )
+
+#shinyUI(
+ # fluidPage(
+  #  verticalLayout(
+   #   titlePanel("Aviato"),
+    #  mainPanel(
+
+     # img(src="twitter.jpg", height = 100, width =150, align ="right")),
 
    #lable output box
-    plotOutput('map'),
-    wellPanel(
-      helpText("Look at the locations of trending hashtags"),
-      textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
-      submitButton("Submit")
-    ))))
+    #plotOutput('map'),
+    #wellPanel(
+     # helpText("Look at the locations of trending hashtags"),
+      #textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
+      #submitButton("Submit")
+  #  ))))
+
 
 # mainPanel(
  # img(src='twitter.png', height = 10, width = 10),
