@@ -29,6 +29,8 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
 
+cities <- read.csv('City_Locations.csv', stringsAsFactors = FALSE)
+
 for(i in 1:nrow(locations.US)){
   name <- paste0('state.data.', locations.US.nospace$name[i])
   assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
@@ -36,6 +38,11 @@ for(i in 1:nrow(locations.US)){
   list <- list[c(1:20)]
   city.data[[i, 1]] <- list
 }
+
+# as an example of how to call something specific.  This calls the third most popular thing 
+# in Baton Rouge
+city.data[["Baton Rouge",1]]$`3`
+
 # Obtain geocodes. Merge each data frame with geocodes. --Jon
 
 shinyServer(function(input, output) { 
