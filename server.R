@@ -25,18 +25,17 @@ locations.US <- locations %>%
 locations.US.nospace <- locations.US
 locations.US.nospace$name <- gsub(" ", "", locations.US.nospace$name)
 locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
-#initializing an empty matrix
-city.data <- matrix(list(), nrow = 63, ncol = 2)
+#initializing an empty matrix, and changing the names 
+city.data <- matrix(list(), nrow = 63, ncol = 1)
+dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
 
 for(i in 1:nrow(locations.US)){
   name <- paste0('state.data.', locations.US.nospace$name[i])
   assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
   list <- eval(parse(text = name)) %>% select(name) %>% split(seq(nrow(eval(parse(text = name)))))
   list <- list[c(1:20)]
-  city.data[[i, 1]] <- locations.US$name[i]
-  city.data[[i, 2]] <- list
+  city.data[[i, 1]] <- list
 }
-
 # Obtain geocodes. Merge each data frame with geocodes. --Jon
 
 shinyServer(function(input, output) { 
