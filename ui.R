@@ -3,24 +3,27 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(twitteR)
-
-fluidPage(
-  verticalLayout(
-    img(src='twitter.png', align = "right"),
-    titlePanel("Find Trending Hashtag"),
-    
-    #lable output box
+shinyUI(
+  fluidPage(
+    verticalLayout(
+      titlePanel("Aviato"),
+      mainPanel(
+      img(src="twitter.jpg", height = 50, width =100, align ="right")),
+   #lable output box
     plotOutput('map'),
     wellPanel(
-      helpText("Look at locations of the trending hashtag"),
+      helpText("Look at the locations of trending hashtags"),
       textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
       submitButton("Submit")
-    )))
+    ))))
 
+# mainPanel(
+ # img(src='twitter.png', height = 10, width = 10),
+  # ),
 #shinyUI(
  #   fluidPage(
   #     titlePanel("Insert Title here"),
-   #    img(src='twitter.svg', align = "right"),
+   #    img(src='twitter.png', align = "right"),
     #      plotOutput('map'),
      #       wellPanel(
       #        helpText("Look at locations of the trending hashtag"),
