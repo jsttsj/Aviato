@@ -3,7 +3,29 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(twitteR)
-shinyUI(navbarPage('1',
+
+fluidPage(
+  verticalLayout(
+    titlePanel("Vertical layout example"),
+    
+    #lable output box
+    plotOutput('map'),
+    wellPanel(
+      sliderInput("n", "Number of points", 10, 200,
+                  value = 50, step = 10)
+    )
+  )
+)
+
+shinyUI(
+    fluidPage(
+       titlePanel("Insert Title here"),
+          plotOutput('map'),
+            wellPanel(
+              helpText("Look at locations of the trending hashtag"),
+              textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
+              submitButton("Submit")
+            )))
                    # Create a tab panel
                    tabPanel('2',
                             titlePanel('3'),
@@ -21,9 +43,7 @@ shinyUI(navbarPage('1',
                               # Main panel: display plotly graph
                               mainPanel(
                                 img(src="#putintwitterimagehere", height = 20, width = 20),
-                                
-                                #lable output box
-                                plotlyOutput('map')
+                                plotOutput('map')
                               )
                             )
                    )
