@@ -3,12 +3,10 @@ library(dplyr)
 library(shiny)
 library(plotly)
 library(rsconnect)
-library(jsonlite)
 
-# Twitter API calls --Sean
 install.packages('twitteR')
 library(twitteR)
-setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
+twitteR:::setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
                     "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
                     "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
                     "Ipi5Fun3ct3xbVFcfsAkCabWYMk0WLTp7Uyq3syYRVhKJ")
@@ -43,18 +41,38 @@ for(i in 1:nrow(locations.US)){
 # in Baton Rouge
 city.data[["Baton Rouge",1]]$`3`
 
-# Obtain geocodes. Merge each data frame with geocodes. --Jon
-
 shinyServer(function(input, output) { 
   
+  # Retrieve search string from user.
+  search.string <- tolower(gsub(" ", "", input$search))
+    
+  # For each of the 62 df, run through trending topics/hashtags. Stop at first instance
+  # where topic/hashtag contains input string. This will minic "related concepts" --Jenny
+  all.cities <- rownames(city.data)
+  ranking <- vector(mode="integer", length = length(all.cities))
+  related.topic <- vector(mode="character", length = length(all.cities))
+  for(city in 1:length(all.cities)) {
+    current.city <- all.cities[i]
+    most.popular <- city.data[[current.city, 1]]
+    has.match <- FALSE
+    index <- 1
+    while(has.match == FALSE) {
+      new.val <- ""
+      popular.topic <- most.popular[[index]]
+      if(grepl(search.string, gsub(" ", "", popular.topic)) == TRUE || index == 20) {
+        new.val <- popular.topic
+        has.match <- TRUE
+      }
+      ranking[i] <- index
+      related.topic[i] <- popular.topic
+    }
+  }
+  
+  to.plot <- cities %>%
+    select(new.name, lat, lon) %>%
+    mutate(ranking, related.topic)
+  
   output$map <- renderPlotly({ 
-    
-    # Obtain user input string. --Jenny
-    
-    # For each of the 62 df, run through trending topics/hashtags. Stop at first instance
-    # where topic/hashtag contains input string. This will minic "related concepts" --Jenny
-    
-    # Retrieve row number of topic/hashtag. --Jenny
     
     # Plot the city on Plotly. Display the topic/hashtag being plotted. Modify size of 
     # plotted dot based on the row number of the topic/hashtag. --Jenny
