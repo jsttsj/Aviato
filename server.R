@@ -52,19 +52,22 @@ shinyServer(function(input, output) {
   ranking <- vector(mode="integer", length = length(all.cities))
   related.topic <- vector(mode="character", length = length(all.cities))
   for(city in 1:length(all.cities)) {
-    current.city <- all.cities[i]
+    current.city <- all.cities[city]
     most.popular <- city.data[[current.city, 1]]
     has.match <- FALSE
     index <- 1
-    while(has.match == FALSE) {
-      new.val <- ""
-      popular.topic <- most.popular[[index]]
-      if(grepl(search.string, gsub(" ", "", popular.topic)) == TRUE || index == 20) {
-        new.val <- popular.topic
+    while(has.match == FALSE && index < 21) {
+      put.related.topic <- ""
+      put.ranking <- 0
+      popular.topic <- most.popular[[index]]$name
+      if(grepl(search.string, tolower(gsub(" ", "", popular.topic))) == TRUE) {
+        put.related.topic <- popular.topic
+        put.ranking <- index
         has.match <- TRUE
       }
-      ranking[i] <- index
-      related.topic[i] <- popular.topic
+      ranking[city] <- put.ranking
+      related.topic[city] <- put.related.topic
+      index <- index + 1
     }
   }
   
@@ -73,6 +76,14 @@ shinyServer(function(input, output) {
     mutate(ranking, related.topic)
   
   output$map <- renderPlotly({ 
+    
+    # Plot the city on Plotly. Display the topic/hashtag being plotted. Modify size of 
+    # plotted dot based on the row number of the topic/hashtag. --Jenny
+    
+    #return()
+  }) 
+  
+  output$table <- renderPlotly({ 
     
     # Plot the city on Plotly. Display the topic/hashtag being plotted. Modify size of 
     # plotted dot based on the row number of the topic/hashtag. --Jenny
