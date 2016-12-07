@@ -68,7 +68,7 @@ shinyServer(function(input, output) {
   }) 
   
   # @RICH: Make sure the UI and server elements are consistent!
-  output$table <- renderPlot({ 
+  output$table <- renderDataTable({ 
     getData() %>%
       select("new.name", "ranking") %>%
       return()
