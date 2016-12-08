@@ -4,7 +4,7 @@ library(shiny)
 library(plotly)
 library(rsconnect)
 library(twitteR)
-
+options(httr_oauth_cache=T)
 twitteR:::setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
                               "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
                               "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
@@ -25,7 +25,7 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-size <- 40
+size <- 5
 # @ SEAN: add comments here
 for(i in 1:size){ 
   name <- paste0('state.data.', locations.US.nospace$name[i])
