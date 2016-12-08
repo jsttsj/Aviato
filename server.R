@@ -25,7 +25,7 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-size <- 5
+size <- 20
 # @ SEAN: add comments here
 for(i in 1:size){ 
   name <- paste0('state.data.', locations.US.nospace$name[i])
@@ -51,7 +51,7 @@ shinyServer(function(input, output) {
   output$map <- renderPlotly({ 
     # Obtain a dataframe of data that will be rendered on the map of the US.
     to.plot <- getData()
-    
+    to.plot$inv.rank <- abs((to.plot$ranking)-20)
     # Specifications of the appearance of the map.
     g <- list(
       scope = 'usa',
@@ -68,7 +68,7 @@ shinyServer(function(input, output) {
     p <- plot_geo(to.plot, locationmode = 'USA-states', sizes = c(1, 150), color=~ranking) %>%
       # Specifications of the bubble markers.
       add_markers(
-        x = ~lon, y = ~lat, hoverinfo = "text", size = ~ranking,
+        x = ~lon, y = ~lat, hoverinfo = "text", size = ~inv.rank,
         text = ~paste(to.plot$new.name, "<br />", to.plot$related.topic, "<br />", "#", to.plot$ranking)
       ) %>%
       layout(title = 'Trending levels of topics', geo = g) %>%
@@ -78,10 +78,10 @@ shinyServer(function(input, output) {
   # Render the Twitter API data onto a data table based on the popularity of certain
   # topics in 63 cities across the US.
   # @RICH: Make sure the UI and server elements are consistent!
-  #output$table <- renderDataTable({ 
-    #getData() %>%
-      #select("new.name", "ranking")
-  #}) 
+  output$table <- renderDataTable({ 
+    getData() %>%
+      select(new.name, related.topic, ranking)
+  }) 
   
   getData <- function() {
     # Obtain a vector of all city names so it is easier to traverse through the matrix.
