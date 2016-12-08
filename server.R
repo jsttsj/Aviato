@@ -25,13 +25,19 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-size <- 5
-# @ SEAN: add comments here
+size <- 63
+
+# This loop prepares the matrix with all of the trend data
 for(i in 1:size){ 
+  # creating a variable name to store the data
   name <- paste0('state.data.', locations.US.nospace$name[i])
+  # Assigning the trend data to that variable name
   assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
+  # Creating a list out of that data frame
   list <- eval(parse(text = name)) %>% select(name) %>% split(seq(nrow(eval(parse(text = name)))))
+  # Truncating the list to 20 for uniformity
   list <- list[c(1:20)]
+  # Storing the list in the matrix
   city.data[[i, 1]] <- list
 }
 
