@@ -51,7 +51,7 @@ shinyServer(function(input, output) {
   output$map <- renderPlotly({ 
     # Obtain a dataframe of data that will be rendered on the map of the US.
     to.plot <- getData()
-    to.plot$inv.rank <- abs((to.plot$ranking)-20)
+    to.plot$inv.rank <- abs((to.plot$ranking)-21)
     # Specifications of the appearance of the map.
     g <- list(
       scope = 'usa',
