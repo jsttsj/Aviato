@@ -25,7 +25,7 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-size <- 20
+size <- 40
 # @ SEAN: add comments here
 for(i in 1:size){ 
   name <- paste0('state.data.', locations.US.nospace$name[i])
@@ -105,7 +105,7 @@ shinyServer(function(input, output) {
       while(has.match == FALSE && index < size + 1) {
         # Initialize dummy values to be placed in the data frame.
         put.related.topic <- ""
-        put.ranking <- NA
+        put.ranking <- 0
         popular.topic <- most.popular[[index]]$name
         # Check if the search string is related to a popular topic in the city.
         # If there is a popular topic, update the dummy values initialized earlier.
@@ -127,7 +127,7 @@ shinyServer(function(input, output) {
     return(cities %>%
              select(new.name, lat, lon) %>%
              mutate(ranking, related.topic) %>%
-             filter(!is.na(ranking))) 
+             filter(ranking != 0)) 
   }
   
 })
