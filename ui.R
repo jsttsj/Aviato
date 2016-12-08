@@ -15,7 +15,7 @@ navbarPage("Aviato!",
              plotlyOutput('map'),
              wellPanel(
                helpText("Find the locations of trending hashtags or related keywords"),
-               textInput("search", label = h3("Enter Hashtag or Related Keyword"), value = "#Hashtag"),
+               textInput("search", label = h3("Enter Hashtag or Related Keyword"), value = "a"),
                submitButton("Submit")
              )
              )
