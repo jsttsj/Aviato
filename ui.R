@@ -3,28 +3,27 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(twitteR)
-shinyUI(navbarPage('1',
-                   # Create a tab panel
-                   tabPanel('2',
-                            titlePanel('3'),
-                            # Create sidebar layout
-                            sidebarLayout(
-                              
-                              # Side panel for controls
-                              sidebarPanel(
-                                
-                                # Create selectable input based on the type of measurement. 
-                                textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag")),
-                              
-                              # Main panel: display plotly graph
-                              mainPanel(
-                                #lable output box
-                                plotlyOutput('map')
-                              )
-                            )
-                   )
-))
+library(rmarkdown)
 
 
-shinyUI()
-8d06760fb918ea2ed65c16bab3b7b7295820a374
+navbarPage("Aviato!", 
+  tabPanel("Map",
+           verticalLayout(
+             titlePanel("Aviato!"),
+             mainPanel(
+               img(src="twitter.jpg", height = 100, width =130, align ="right")),
+             plotlyOutput('map'),
+             wellPanel(
+               helpText("Find the locations of trending hashtags or related keywords"),
+               textInput("search", label = h3("Enter Hashtag or Related Keyword"), value = "#Hashtag"),
+               submitButton("Submit")
+             )
+             )
+           ),
+  tabPanel("Table",
+           dataTableOutput("table")), 
+  tabPanel("About",
+           includeMarkdown("About.md"))
+  )
+#shinyUI()
+#8d06760fb918ea2ed65c16bab3b7b7295820a374
