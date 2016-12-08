@@ -6,9 +6,9 @@ library(rsconnect)
 library(twitteR)
 
 twitteR:::setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
-                    "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
-                    "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
-                    "Ipi5Fun3ct3xbVFcfsAkCabWYMk0WLTp7Uyq3syYRVhKJ")
+                              "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
+                              "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
+                              "Ipi5Fun3ct3xbVFcfsAkCabWYMk0WLTp7Uyq3syYRVhKJ")
 
 # This code is supposed to get the trend locations, and then get the trends for each location --Sean
 
@@ -25,9 +25,9 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-
+size <- 5
 # @ SEAN: add comments here
-for(i in 1:nrow(locations.US)){
+for(i in 1:size){ 
   name <- paste0('state.data.', locations.US.nospace$name[i])
   assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
   list <- eval(parse(text = name)) %>% select(name) %>% split(seq(nrow(eval(parse(text = name)))))
@@ -69,8 +69,8 @@ shinyServer(function(input, output) {
       # Specifications of the bubble markers.
       add_markers(
         x = ~lon, y = ~lat, hoverinfo = "text", size = ~ranking,
-        text = ~paste(to.plot$new.name, "<br />", to.plot$related.topic, "<br />", "#", 21 - to.plot$ranking)
-        ) %>%
+        text = ~paste(to.plot$new.name, "<br />", to.plot$related.topic, "<br />", "#", to.plot$ranking)
+      ) %>%
       layout(title = 'Trending levels of topics', geo = g) %>%
       return()
   }) 
@@ -78,10 +78,10 @@ shinyServer(function(input, output) {
   # Render the Twitter API data onto a data table based on the popularity of certain
   # topics in 63 cities across the US.
   # @RICH: Make sure the UI and server elements are consistent!
-  output$table <- renderDataTable({ 
-    getData() %>%
-      select("new.name", "ranking")
-  }) 
+  #output$table <- renderDataTable({ 
+    #getData() %>%
+      #select("new.name", "ranking")
+  #}) 
   
   getData <- function() {
     # Obtain a vector of all city names so it is easier to traverse through the matrix.
@@ -94,7 +94,7 @@ shinyServer(function(input, output) {
     
     # Consolidate the the information into that will be displayed to the user into 
     # a single dataframe
-    for(city in 1:length(all.cities)) {
+    for(city in 1:size) { 
       # Obtain information on the popular topics in a given city.
       current.city <- all.cities[city]
       most.popular <- city.data[[current.city, 1]]
@@ -102,7 +102,7 @@ shinyServer(function(input, output) {
       has.match <- FALSE
       index <- 1
       # Given the list of popular 
-      while(has.match == FALSE && index < length(all.cities) + 1) {
+      while(has.match == FALSE && index < size + 1) {
         # Initialize dummy values to be placed in the data frame.
         put.related.topic <- ""
         put.ranking <- NA
@@ -121,17 +121,13 @@ shinyServer(function(input, output) {
         index <- index + 1
       }
     }
-
+    
     # Return a new data frame containing city name with geographical location and the
     # name and popularity of the matched topic.
     return(cities %>%
              select(new.name, lat, lon) %>%
-             mutate(ranking, related.topic))
+             mutate(ranking, related.topic) %>%
+             filter(!is.na(ranking))) 
   }
   
 })
-
-
-
- 
-  
