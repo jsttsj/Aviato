@@ -3,23 +3,27 @@ library(plotly)
 library(dplyr)
 library(rsconnect)
 library(twitteR)
+library(rmarkdown)
+
 
 navbarPage("Aviato!", 
   tabPanel("Map",
            verticalLayout(
-             titlePanel("Aviato"),
+             titlePanel("Aviato!"),
              mainPanel(
-               img(src="twitter.jpg", height = 100, width =150, align ="right")),
+               img(src="twitter.jpg", height = 100, width =130, align ="right")),
              plotlyOutput('map'),
              wellPanel(
-               helpText("Look at the locations of trending hashtags"),
-               textInput("search", label = h3("Enter Hashtag"), value = "#Hashtag"),
+               helpText("Find the locations of trending hashtags or related keywords"),
+               textInput("search", label = h3("Enter Hashtag or Related Keyword"), value = "#Hashtag"),
                submitButton("Submit")
              )
              )
            ),
   tabPanel("Table",
-           dataTableOutput("table"))
+           dataTableOutput("table")), 
+  tabPanel("About",
+           includeMarkdown("About.md"))
   )
 #shinyUI()
 #8d06760fb918ea2ed65c16bab3b7b7295820a374
