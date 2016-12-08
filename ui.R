@@ -9,7 +9,7 @@ library(rmarkdown)
 navbarPage("Aviato!", 
   tabPanel("Map",
            verticalLayout(
-             titlePanel("Aviato!"),
+             titlePanel("Locations of Trending Topics!!"),
              mainPanel(
                img(src="twitter.jpg", height = 100, width =130, align ="right")),
              plotlyOutput('map'),
