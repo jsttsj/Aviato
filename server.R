@@ -47,8 +47,8 @@ cities <- read.csv("City_Locations.csv", stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) { 
   
-  # Retrieve search string from user. Remove spaces and change to all lowercase to 
-  # make topic matching easier.
+  # Retrieve search string from user. Remove spaces and change to all lowercase to make
+  # topic matching easier. Is put in a reactive function because it is requird by Shiny
   searchString <- reactive({
     tolower(gsub(" ", "", input$search))
   }) 
@@ -130,7 +130,8 @@ shinyServer(function(input, output) {
     }
     
     # Return a new data frame containing city name with geographical location and the
-    # name and popularity of the matched topic.
+    # name and popularity of the matched topic. Only return cities that have trending topics
+    # related to the search string.
     return(cities %>%
              select(new.name, lat, lon) %>%
              mutate(ranking, related.topic) %>%
