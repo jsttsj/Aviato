@@ -4,46 +4,14 @@ library(shiny)
 library(plotly)
 library(rsconnect)
 library(twitteR)
-options(httr_oauth_cache=T)
-twitteR:::setup_twitter_oauth("KgSpEvpVmBqyjaHb8NKRS2cbq",
-                              "XLGHwHKXUF6rt4m3lXQNhCOVsAyzneQrznBe4INje27olbCUHO",
-                              "803743164884340736-ceXBIGtqVWc8wp27jXclV82QX6gWtoT",
-                              "Ipi5Fun3ct3xbVFcfsAkCabWYMk0WLTp7Uyq3syYRVhKJ")
 
-# This code is supposed to get the trend locations, and then get the trends for each location --Sean
-
-# trend locations
-locations <- twitteR::availableTrendLocations()
-# getting only the locations and the id's associated
-locations.US <- locations %>% 
-  filter(country == 'United States', name != 'United States') %>% 
-  select(name, woeid)
-#removing spaces and hyphens for easier storage
-locations.US.nospace <- locations.US
-locations.US.nospace$name <- gsub(" ", "", locations.US.nospace$name)
-locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
-#initializing an empty matrix, and changing the names 
-city.data <- matrix(list(), nrow = 63, ncol = 1)
-dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-# To control the number of API calls the web application makes every time the page is refreshed
-size <- 63
-
-# This loop prepares the matrix with all of the trend data
-for(i in 1:size){ 
-  # creating a variable name to store the data
-  name <- paste0('state.data.', locations.US.nospace$name[i])
-  # Assigning the trend data to that variable name
-  assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
-  # Creating a list out of that data frame
-  list <- eval(parse(text = name)) %>% select(name) %>% split(seq(nrow(eval(parse(text = name)))))
-  # Truncating the list to 20 for uniformity
-  list <- list[c(1:20)]
-  # Storing the list in the matrix
-  city.data[[i, 1]] <- list
-}
+# Load functions to call API and perform data wrangling on API data and plotting the map.
+source("callAPI.R")
+source("getData.R")
+source("plotMap.R")
 
 # Read in data containing longitudes and lattitudes of cities from the Twitter API
-cities <- read.csv("City_Locations.csv", stringsAsFactors = FALSE)
+cities <- read.csv("./data/City_Locations.csv", stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) { 
   
@@ -59,28 +27,7 @@ shinyServer(function(input, output) {
     # Obtain a dataframe of data that will be rendered on the map of the US.
     to.plot <- getData()
     to.plot$inv.rank <- abs((to.plot$ranking) - 21)
-
-    # Specifications of the appearance of the map.
-    g <- list(
-      scope = 'usa',
-      projection = list(type = 'albers usa'),
-      showland = TRUE,
-      landcolor = toRGB("gray85"),
-      subunitwidth = 1,
-      countrywidth = 1,
-      subunitcolor = toRGB("white"),
-      countrycolor = toRGB("white")
-    )
-    
-    # Plot the bubble map on Plotly
-    p <- plot_geo(to.plot, locationmode = 'USA-states', sizes = c(1, 150), color=~ranking) %>%
-      # Specifications of the bubble markers.
-      add_markers(
-        x = ~lon, y = ~lat, hoverinfo = "text", size = ~inv.rank,
-        text = ~paste(to.plot$new.name, "<br />", to.plot$related.topic, "<br />", "#", to.plot$ranking)
-      ) %>%
-      layout(title = paste0("Trending levels of topics related to ", input$search), geo = g) %>%
-      return()
+    return(plotMap(to.plot))
   }) 
   
   # Render the Twitter API data onto a data table based on the popularity of certain
@@ -89,53 +36,5 @@ shinyServer(function(input, output) {
     getData() %>%
       select(new.name, related.topic, ranking)
   }) 
-  
-  getData <- function() {
-    # Obtain a vector of all city names so it is easier to traverse through the matrix.
-    all.cities <- rownames(city.data)
-    
-    # Create vectors for topic ranking and the corresponding related topics based on the
-    # search string so that they can be added to the plotted data frame later.
-    ranking <- vector(mode="integer", length = length(all.cities))
-    related.topic <- vector(mode="character", length = length(all.cities))
-    
-    # Consolidate the the information into that will be displayed to the user into 
-    # a single dataframe
-    for(city in 1:size) { 
-      # Obtain information on the popular topics in a given city.
-      current.city <- all.cities[city]
-      most.popular <- city.data[[current.city, 1]]
-      # Conditions to control the while loop
-      has.match <- FALSE
-      index <- 1
-      # Given the list of popular topics, traverse the list until a match is found or the list ends.
-      while(has.match == FALSE && index < 21) {
-        # Initialize dummy values to be placed in the data frame.
-        put.related.topic <- ""
-        put.ranking <- 0
-        popular.topic <- most.popular[[index]]$name
-        # Check if the search string is related to a popular topic in the city.
-        # If there is a popular topic, update the dummy values initialized earlier.
-        if(grepl(searchString(), tolower(gsub(" ", "", popular.topic))) == TRUE) {
-          put.related.topic <- popular.topic
-          put.ranking <- index
-          has.match <- TRUE
-        }
-        # Record the values into the data frame.
-        ranking[city] <- put.ranking
-        related.topic[city] <- put.related.topic
-        # Continue traversing the matrix.
-        index <- index + 1
-      }
-    }
-    
-    # Return a new data frame containing city name with geographical location and the
-    # name and popularity of the matched topic. Only return cities that have trending topics
-    # related to the search string.
-    return(cities %>%
-             select(new.name, lat, lon) %>%
-             mutate(ranking, related.topic) %>%
-             filter(ranking != 0)) 
-  }
   
 })
