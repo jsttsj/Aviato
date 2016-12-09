@@ -25,16 +25,10 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
-<<<<<<< HEAD
 # To control the number of API calls the web application makes every time the page is refreshed
-size <- 40
-
-# Set the values of each city with their top trends
-=======
 size <- 63
 
 # This loop prepares the matrix with all of the trend data
->>>>>>> 02a87c6de3db04917b8dfb1e71f31f53bb4b8e29
 for(i in 1:size){ 
   # creating a variable name to store the data
   name <- paste0('state.data.', locations.US.nospace$name[i])
@@ -64,12 +58,8 @@ shinyServer(function(input, output) {
   output$map <- renderPlotly({ 
     # Obtain a dataframe of data that will be rendered on the map of the US.
     to.plot <- getData()
-<<<<<<< HEAD
-    # To record the relative sizes of dots that should be plotted.
-    to.plot$inv.rank <- abs((to.plot$ranking) - 20)
-=======
-    to.plot$inv.rank <- abs((to.plot$ranking)-21)
->>>>>>> 02a87c6de3db04917b8dfb1e71f31f53bb4b8e29
+    to.plot$inv.rank <- abs((to.plot$ranking) - 21)
+
     # Specifications of the appearance of the map.
     g <- list(
       scope = 'usa',
