@@ -25,8 +25,10 @@ locations.US.nospace$name <- gsub("-", "", locations.US.nospace$name)
 #initializing an empty matrix, and changing the names 
 city.data <- matrix(list(), nrow = 63, ncol = 1)
 dimnames(city.data) <- list(unlist(locations.US$name), c("Data"))
+# To control the number of API calls the web application makes every time the page is refreshed
 size <- 40
-# @ SEAN: add comments here
+
+# Set the values of each city with their top trends
 for(i in 1:size){ 
   name <- paste0('state.data.', locations.US.nospace$name[i])
   assign(name, twitteR::getTrends(locations.US.nospace$woeid[i]))
@@ -51,7 +53,8 @@ shinyServer(function(input, output) {
   output$map <- renderPlotly({ 
     # Obtain a dataframe of data that will be rendered on the map of the US.
     to.plot <- getData()
-    to.plot$inv.rank <- abs((to.plot$ranking)-20)
+    # To record the relative sizes of dots that should be plotted.
+    to.plot$inv.rank <- abs((to.plot$ranking) - 20)
     # Specifications of the appearance of the map.
     g <- list(
       scope = 'usa',
@@ -71,13 +74,12 @@ shinyServer(function(input, output) {
         x = ~lon, y = ~lat, hoverinfo = "text", size = ~inv.rank,
         text = ~paste(to.plot$new.name, "<br />", to.plot$related.topic, "<br />", "#", to.plot$ranking)
       ) %>%
-      layout(title = 'Trending levels of topics', geo = g) %>%
+      layout(title = paste0("Trending levels of topics related to ", input$search), geo = g) %>%
       return()
   }) 
   
   # Render the Twitter API data onto a data table based on the popularity of certain
-  # topics in 63 cities across the US.
-  # @RICH: Make sure the UI and server elements are consistent!
+  # topics in cities across the US.
   output$table <- renderDataTable({ 
     getData() %>%
       select(new.name, related.topic, ranking)
@@ -101,8 +103,8 @@ shinyServer(function(input, output) {
       # Conditions to control the while loop
       has.match <- FALSE
       index <- 1
-      # Given the list of popular 
-      while(has.match == FALSE && index < size + 1) {
+      # Given the list of popular topics, traverse the list until a match is found or the list ends.
+      while(has.match == FALSE && index < 21) {
         # Initialize dummy values to be placed in the data frame.
         put.related.topic <- ""
         put.ranking <- 0
